@@ -26,17 +26,12 @@ stages:
               path: $(MAVEN_CACHE_FOLDER)
 
           - script: |
-              cd lootbox-service
-              mvn clean install -DskipTests
+              cd lootbox-service && mvn clean install -DskipTests
             displayName: 'Build Project'
 
           - script: |
-              cd lootbox-service
-              mvn test -Dspring.datasource.url=jdbc:h2:mem:testdb \
-                       -Dspring.datasource.driver-class-name=org.h2.Driver \
-                       -Dspring.datasource.username=sa \
-                       -Dspring.datasource.password= \
-                       -Dspring.sql.init.mode=never
+              cd lootbox-service && mvn test -Dspring.datasource.url=jdbc:h2:mem:testdb -Dspring.datasource.driver-class-name=org.h2.Driver -Dspring.datasource.username=sa -Dspring.datasource.password= -Dspring.sql.init.mode=never
+            workingDirectory: 'lootbox-service'
             displayName: 'Run Unit Tests with H2'
 
           - task: PublishTestResults@2
