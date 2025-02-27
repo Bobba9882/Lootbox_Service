@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/lootboxes")
 public class LootboxController {
@@ -19,7 +21,13 @@ public class LootboxController {
 
     @PostMapping("/{id}/open")
     public ResponseEntity<Item> openLootbox(@PathVariable Long id) {
-        Item item = lootboxService.openLootbox(id);
+        Item item = lootboxService.openLootbox(1L, id);
         return ResponseEntity.ok(item);
+    }
+
+    @PostMapping("/{id}/open/{pulls}")
+    public ResponseEntity<Map<String, Integer>> openMultipleLootboxes(@PathVariable Long id, @PathVariable int pulls) {
+        Map<String, Integer> results = lootboxService.openLootboxMultipleTimes(id, pulls);
+        return ResponseEntity.ok(results);
     }
 }
