@@ -1,62 +1,25 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
 trigger:
-  branches:
-    include:
-      - main  # Change this if you want other branches to trigger the pipeline
+- main
 
 pool:
-  vmImage: 'ubuntu-latest'  # Microsoft-hosted agent with Java 17 & Maven pre-installed
+  name: 'Self-Hosted'
 
-variables:
-  JAVA_VERSION: '17'
-  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2  # Caches Maven dependencies
+steps:
+- script: cd lootbox-service
+  displayName: 'Change directory to lootbox-service'
 
-stages:
-  - stage: Build_and_Test
-    displayName: 'Build and Test'
-    jobs:
-      - job: Build
-        displayName: 'Build and Test with Maven'
-        steps:
-          - task: Cache@2
-            displayName: 'Cache Maven Dependencies'
-            inputs:
-              key: 'maven | "$(Agent.OS)" | **/pom.xml'
-              restoreKeys: 'maven | "$(Agent.OS)"'
-              path: $(MAVEN_CACHE_FOLDER)
-
-          - task: UseJavaVersion@1
-            displayName: 'Set up Java 17'
-            inputs:
-              version: $(JAVA_VERSION)
-              architecture: 'x64'
-
-          - script: |
-              mvn clean install -DskipTests
-            displayName: 'Build Project'
-
-          - script: |
-              mvn test -Dspring.datasource.url=jdbc:h2:mem:testdb \
-                       -Dspring.datasource.driver-class-name=org.h2.Driver \
-                       -Dspring.datasource.username=sa \
-                       -Dspring.datasource.password= \
-                       -Dspring.sql.init.mode=never
-            displayName: 'Run Unit Tests with H2'
-
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
-            inputs:
-              testResultsFiles: '**/surefire-reports/TEST-*.xml'
-              testRunTitle: 'Maven Unit Tests'
-
-          - task: CopyFiles@2
-            displayName: 'Copy JAR for Artifacts'
-            inputs:
-              SourceFolder: '$(Build.SourcesDirectory)/lootbox-service/target'
-              Contents: '*.jar'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publish JAR Artifact'
-            inputs:
-              pathToPublish: '$(Build.ArtifactStagingDirectory)'
-              artifactName: 'drop'
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'lootbox-service/pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.11'
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'package'
