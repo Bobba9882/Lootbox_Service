@@ -4,7 +4,8 @@ trigger:
       - main  # Change this if you want other branches to trigger the pipeline
 
 pool:
-  vmImage: 'ubuntu-latest'  # Microsoft-hosted agent with Java 17 & Maven pre-installed
+  name: 'Self-Hosted'
+
 
 variables:
   JAVA_VERSION: '17'
