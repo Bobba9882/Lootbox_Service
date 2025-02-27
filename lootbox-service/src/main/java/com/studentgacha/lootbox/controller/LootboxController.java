@@ -24,15 +24,25 @@ public class LootboxController {
 
     @PostMapping("/{id}/open")
     public ResponseEntity<Item> openLootbox(@PathVariable Long id) {
-        Item item = lootboxService.openLootbox(1L, id);
-        return ResponseEntity.ok(item);
+        try {
+            Item item = lootboxService.openLootbox(1L, id);
+            return ResponseEntity.ok(item);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // Return 404 instead of 500
+        }
     }
+
 
     @PostMapping("/{id}/open/{pulls}")
     public ResponseEntity<Map<String, Integer>> openMultipleLootboxes(@PathVariable Long id, @PathVariable int pulls) {
-        Map<String, Integer> results = lootboxService.openLootboxMultipleTimes(id, pulls);
-        return ResponseEntity.ok(results);
+        try {
+            Map<String, Integer> results = lootboxService.openLootboxMultipleTimes(id, pulls);
+            return ResponseEntity.ok(results);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // Return 404 instead of 500
+        }
     }
+
 
     @GetMapping("/items")
     public ResponseEntity<List<ItemDTO>> getItemsByIds(@RequestParam List<Long> ids) {
@@ -54,4 +64,5 @@ public class LootboxController {
 
         return ResponseEntity.ok(itemDTOs);
     }
+
 }
