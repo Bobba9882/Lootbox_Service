@@ -24,11 +24,12 @@ stages:
               restoreKeys: 'maven | "$(Agent.OS)"'
               path: $(MAVEN_CACHE_FOLDER)
 
-          - task: UseJavaVersion@1
+          - task: JavaToolInstaller@0
             displayName: 'Set up Java 17'
             inputs:
-              version: $(JAVA_VERSION)
-              architecture: 'x64'
+              versionSpec: $(JAVA_VERSION)
+              jdkArchitectureOption: 'x64'
+              jdkSourceOption: 'preInstalled'
 
           - script: |
               mvn clean install -DskipTests
