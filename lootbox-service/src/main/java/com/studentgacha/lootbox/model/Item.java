@@ -16,8 +16,8 @@ public class Item {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "value", nullable = false)
-    private int value; // Stufi value when sold
+    @Column(name = "item_value", nullable = false)
+    private int itemValue; // Stufi value when sold
 
     @Column(name = "dropchance", nullable = false)
     private double dropChance; // Probability (0.0 - 1.0)
@@ -32,9 +32,9 @@ public class Item {
 
     // Constructors
     public Item() {}
-    public Item(String name, int value, double dropChance,String description, Lootbox lootbox) {
+    public Item(String name, int itemValue, double dropChance, String description, Lootbox lootbox) {
         this.name = name;
-        this.value = value;
+        this.itemValue = itemValue;
         this.dropChance = dropChance;
         this.description = description;
         this.lootbox = lootbox;

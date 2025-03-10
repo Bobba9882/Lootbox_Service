@@ -56,7 +56,7 @@ public class LootboxController {
                 .map(item -> new ItemDTO(
                         item.getId(),
                         item.getName(),
-                        item.getValue(),
+                        item.getItemValue(),
                         item.getDropChance(),
                         item.getDescription()
                 ))
