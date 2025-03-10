@@ -58,7 +58,7 @@ class LootboxControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testItem.getId()))
                 .andExpect(jsonPath("$.name").value(testItem.getName()))
-                .andExpect(jsonPath("$.value").value(testItem.getValue()))
+                .andExpect(jsonPath("$.value").value(testItem.getItemValue()))
                 .andExpect(jsonPath("$.dropChance").value(testItem.getDropChance()))
                 .andExpect(jsonPath("$.description").value(testItem.getDescription()));
     }
@@ -110,7 +110,7 @@ class LootboxControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].itemId").value(testItem.getId())) // Fix: Change "id" to "itemId"
                 .andExpect(jsonPath("$[0].name").value(testItem.getName()))
-                .andExpect(jsonPath("$[0].value").value(testItem.getValue()))
+                .andExpect(jsonPath("$[0].value").value(testItem.getItemValue()))
                 .andExpect(jsonPath("$[0].dropChance").value(testItem.getDropChance()))
                 .andExpect(jsonPath("$[0].description").value(testItem.getDescription()));
     }
