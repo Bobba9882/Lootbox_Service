@@ -3,6 +3,7 @@ package com.studentgacha.lootbox.controller;
 import com.studentgacha.lootbox.DTOs.ItemDTO;
 import com.studentgacha.lootbox.model.Item;
 import com.studentgacha.lootbox.repository.ItemRepository;
+import com.studentgacha.lootbox.repository.LootboxRepository;
 import com.studentgacha.lootbox.service.LootboxService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,12 @@ import java.util.stream.Collectors;
 public class LootboxController {
     private final LootboxService lootboxService;
     private final ItemRepository itemRepository;
+    private final LootboxRepository lootboxRepository;
 
-    public LootboxController(LootboxService lootboxService, ItemRepository itemRepository) {
+    public LootboxController(LootboxService lootboxService, ItemRepository itemRepository, LootboxRepository lootboxRepository) {
         this.lootboxService = lootboxService;
         this.itemRepository = itemRepository;
+        this.lootboxRepository = lootboxRepository;
     }
 
     @PostMapping("/{id}/open")
@@ -31,6 +34,17 @@ public class LootboxController {
             return ResponseEntity.notFound().build(); // Return 404 instead of 500
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getLootboxById(@PathVariable Long id) {
+        try {
+            var lootbox = lootboxRepository.findById(id);
+            return ResponseEntity.ok(lootbox);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
     @PostMapping("/{id}/open/{pulls}")

@@ -23,8 +23,6 @@ public class LootboxEventPublisherImpl implements LootboxEventPublisher {
     @Override
     public void publishLootboxOpened(Long userId, Long itemId) {
         LootboxOpenedEventDTO event = new LootboxOpenedEventDTO(userId, itemId);
-        System.out.println("Sending event to RabbitMQ: " + event);
         rabbitTemplate.convertAndSend(lootboxQueue, event);
-        System.out.println("Event sent successfully!");
     }
 }
