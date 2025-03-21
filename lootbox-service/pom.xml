@@ -28,6 +28,9 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<sonar.projectKey>Bobba9882_Lootbox_Service</sonar.projectKey>
+		<sonar.organization>bobba9882</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -105,6 +108,10 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
@@ -118,5 +125,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
