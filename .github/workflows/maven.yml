@@ -52,6 +52,9 @@ jobs:
           name: surefire-reports
           path: lootbox-service/target/surefire-reports/
           retention-days: 7
+          
+      - name: Debug Test Report Files
+        run: ls -R lootbox-service/target/surefire-reports/
 
       - name: Publish Unit Test Report
         uses: dorny/test-reporter@v1
