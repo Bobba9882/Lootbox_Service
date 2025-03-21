@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     branches:
       - main
+      - dev
 
 jobs:
   build-and-test:
@@ -50,3 +52,32 @@ jobs:
           name: surefire-reports
           path: lootbox-service/target/surefire-reports/
           retention-days: 7
+
+      - name: Static Code Analysis with SpotBugs
+        run: |
+          cd lootbox-service
+          mvn com.github.spotbugs:spotbugs-maven-plugin:spotbugs
+
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "lootbox-service"
+          path: "lootbox-service"
+          format: "HTML"
+
+      - name: Upload Dependency Check Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: lootbox-service/dependency-check-report.html
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/lootbox-service:latest ./lootbox-service
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/lootbox-service:latest
