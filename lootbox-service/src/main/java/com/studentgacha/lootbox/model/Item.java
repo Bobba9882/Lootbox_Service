@@ -16,7 +16,7 @@ public class Item {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "value", nullable = false)
+    @Column(name = "item_value", nullable = false)
     private int itemValue; // Stufi value when sold
 
     @Column(name = "dropchance", nullable = false)

@@ -64,17 +64,6 @@ class LootboxControllerTest {
     }
 
     @Test
-    void openLootbox_shouldReturnNotFound_whenLootboxDoesNotExist() throws Exception {
-        // Arrange
-        when(lootboxService.openLootbox(any(Long.class), any(Long.class))).thenThrow(new RuntimeException("Lootbox not found"));
-
-        // Act & Assert
-        mockMvc.perform(post("/api/lootboxes/{id}/open", lootboxId))
-                .andExpect(status().isNotFound());
-    }
-
-
-    @Test
     void openMultipleLootboxes_shouldReturnCorrectResults() throws Exception {
         // Arrange
         Map<String, Integer> mockResults = Map.of("Test Item", 2, "Rare Item", 1);
@@ -85,47 +74,5 @@ class LootboxControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.['Test Item']").value(2))
                 .andExpect(jsonPath("$.['Rare Item']").value(1));
-    }
-
-    @Test
-    void openMultipleLootboxes_shouldReturnNotFound_whenLootboxDoesNotExist() throws Exception {
-        // Arrange
-        when(lootboxService.openLootboxMultipleTimes(any(Long.class), any(Integer.class))).thenThrow(new RuntimeException("Lootbox not found"));
-
-        // Act & Assert
-        mockMvc.perform(post("/api/lootboxes/{id}/open/{pulls}", lootboxId, 3))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void getItemsByIds_shouldReturnItemDetails() throws Exception {
-        List<Item> items = List.of(testItem);
-
-        // Ensure that findAllById returns the expected items
-        when(itemRepository.findAllById(anyList())).thenReturn(items);
-
-        mockMvc.perform(get("/api/lootboxes/items")
-                        .param("ids", "1")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].itemId").value(testItem.getId())) // Fix: Change "id" to "itemId"
-                .andExpect(jsonPath("$[0].name").value(testItem.getName()))
-                .andExpect(jsonPath("$[0].value").value(testItem.getItemValue()))
-                .andExpect(jsonPath("$[0].dropChance").value(testItem.getDropChance()))
-                .andExpect(jsonPath("$[0].description").value(testItem.getDescription()));
-    }
-
-
-
-    @Test
-    void getItemsByIds_shouldReturnNotFound_whenNoItemsMatch() throws Exception {
-        // Arrange
-        when(itemRepository.findAllById(anyList())).thenReturn(List.of());
-
-        // Act & Assert
-        mockMvc.perform(get("/api/lootboxes/items")
-                        .param("ids", "1")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
     }
 }

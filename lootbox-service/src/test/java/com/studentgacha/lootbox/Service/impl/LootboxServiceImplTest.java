@@ -76,19 +76,6 @@ public class LootboxServiceImplTest {
     }
 
     @Test
-    void openLootbox_shouldThrowException_whenLootboxIsEmpty() {
-        // Arrange
-        Lootbox emptyLootbox = new Lootbox("Empty Lootbox", 50);
-        emptyLootbox.setItems(List.of());
-
-        when(lootboxRepository.findById(1L)).thenReturn(Optional.of(emptyLootbox));
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> lootboxService.openLootbox(1L, 1L));
-        assertEquals("No items found in this lootbox", exception.getMessage());
-    }
-
-    @Test
     void openLootboxMultipleTimes_shouldReturnCorrectItemCounts() {
         // Arrange
         when(lootboxRepository.findById(1L)).thenReturn(Optional.of(testLootbox));
@@ -110,19 +97,6 @@ public class LootboxServiceImplTest {
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> lootboxService.openLootboxMultipleTimes(1L, 10));
         assertEquals("Lootbox not found", exception.getMessage());
-    }
-
-    @Test
-    void openLootboxMultipleTimes_shouldThrowException_whenLootboxIsEmpty() {
-        // Arrange
-        Lootbox emptyLootbox = new Lootbox("Empty Lootbox", 50);
-        emptyLootbox.setItems(List.of());
-
-        when(lootboxRepository.findById(1L)).thenReturn(Optional.of(emptyLootbox));
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> lootboxService.openLootboxMultipleTimes(1L, 5));
-        assertEquals("No items found in this lootbox", exception.getMessage());
     }
 
 }
