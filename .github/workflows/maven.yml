@@ -53,6 +53,14 @@ jobs:
           path: lootbox-service/target/surefire-reports/
           retention-days: 7
 
+      - name: Publish Unit Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit Tests
+          path: lootbox-service/target/surefire-reports
+          reporter: java-junit
+
   sonar-analysis:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
@@ -111,9 +119,14 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: '${{ secrets.DOCKER_USERNAME }}/lootbox-service:latest'
-          format: 'table'
-          exit-code: '1'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: trivy-results.sarif
 
       - name: Push Docker Image to Docker Hub
         run: |
