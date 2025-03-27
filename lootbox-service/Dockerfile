@@ -1,30 +1,28 @@
-# Gebruik een officiële Java 17 JDK als basisimage
-FROM eclipse-temurin:17-jdk
+# Stage 1: Build stage met Maven
+FROM eclipse-temurin:17-jdk AS builder
 
-# Stel de werkdirectory in
 WORKDIR /app
 
-# Kopieer de Maven dependencies (gebruikt voor efficiënte caching)
+# Alleen pom.xml kopiëren en dependencies installeren voor cache
 COPY pom.xml .
+RUN apt-get update && apt-get install -y maven && mvn dependency:go-offline
+
+# Daarna source code toevoegen
 COPY src ./src
 
-# Installeer Maven
-RUN apt-get update && apt-get install -y maven
-
-# Bouw de applicatie
+# Build zonder tests
 RUN mvn clean package -DskipTests
 
-# Gebruik een kleinere JRE image om de uiteindelijke container te bouwen
+# Stage 2: Runtime stage met kleinere JRE image
 FROM eclipse-temurin:17-jre
 
-# Stel de werkdirectory in
 WORKDIR /app
 
-# Kopieer de gegenereerde JAR uit de vorige stap
-COPY --from=0 /app/target/*.jar app.jar
+# Kopieer alleen de jar vanuit de vorige stage
+COPY --from=builder /app/target/*.jar app.jar
 
 # Expose de juiste poort
-EXPOSE 8080
+EXPOSE 8081
 
-# Start de applicatie
-CMD ["java", "-jar", "app.jar"]
+# Start de app
+ENTRYPOINT ["java", "-jar", "app.jar"]
