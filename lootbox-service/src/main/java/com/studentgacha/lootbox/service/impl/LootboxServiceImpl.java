@@ -61,6 +61,11 @@ public class LootboxServiceImpl implements LootboxService {
     }
 
     // Item Management
+    @Override
+    public List<Item> getItemsByIds(List<Long> ids) {
+        return itemRepository.findAllById(ids);
+    }
+
 
     @Override
     public Item addItemToLootbox(final Long lootboxId, final Item item) {

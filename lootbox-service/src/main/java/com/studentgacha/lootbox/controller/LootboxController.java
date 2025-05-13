@@ -4,9 +4,11 @@ import com.studentgacha.lootbox.DTOs.ItemDTO;
 import com.studentgacha.lootbox.model.Item;
 import com.studentgacha.lootbox.model.Lootbox;
 import com.studentgacha.lootbox.service.LootboxService;
+import io.sentry.Sentry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +62,27 @@ public class LootboxController {
     }
 
     // Item Management
+    @Operation(summary = "Get unique item information", description = "Haalt iteminformatie op voor een lijst van item-ID's zonder duplicaten.")
+    @GetMapping("/items")
+    public ResponseEntity<List<ItemDTO>> getUniqueItems(
+            @RequestParam List<Long> ids) {
+
+        // Verwijder duplicaten
+        List<Long> uniqueIds = ids.stream().distinct().toList();
+
+        // Haal de unieke items op
+        List<ItemDTO> items = lootboxService.getItemsByIds(uniqueIds)
+                .stream()
+                .map(item -> new ItemDTO(
+                        item.getId(),
+                        item.getName(),
+                        item.getItemValue(),
+                        item.getDropChance(),
+                        item.getDescription()))
+                .toList();
+
+        return ResponseEntity.ok(items);
+    }
 
     @Operation(summary = "Add an item to a lootbox", description = "Adds a new item to an existing lootbox.")
     @PostMapping("/{lootboxId}/items")

@@ -15,6 +15,7 @@ public interface LootboxService {
     List<Item> getLootboxContents(Long lootboxId);
 
     // Item Operations
+    List<Item> getItemsByIds(List<Long> ids);
     Item addItemToLootbox(Long lootboxId, Item item);
     Item updateItem(Long itemId, Item updatedItem);
     void deleteItem(Long itemId);
