@@ -8,6 +8,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  checks: write
+  contents: read
+  security-events: write
+
 jobs:
   build-and-test:
     name: Build and Test
@@ -40,7 +45,7 @@ jobs:
       - name: Run Unit Tests with H2
         run: |
           cd lootbox-service
-          mvn test -Dspring.datasource.url=jdbc:h2:mem:testdb \
+          mvn test -Dsurefire.useFile=true -Dspring.datasource.url=jdbc:h2:mem:testdb \
                    -Dspring.datasource.driver-class-name=org.h2.Driver \
                    -Dspring.datasource.username=sa \
                    -Dspring.datasource.password= \
@@ -58,7 +63,7 @@ jobs:
         if: always()
         with:
           name: Unit Tests
-          path: lootbox-service/target/surefire-reports
+          path: lootbox-service/target/surefire-reports/TEST-*.xml
           reporter: java-junit
 
   sonar-analysis:
@@ -124,9 +129,10 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results to GitHub
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-results.sarif
+
 
       - name: Push Docker Image to Docker Hub
         run: |
